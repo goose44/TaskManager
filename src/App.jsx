@@ -4,6 +4,7 @@ import './App.css';
 function App() {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState("");
+  const [dueDate, setDueDate] = useState("");
 
   // load tasks from localStorage on first load
   useEffect(() => {
@@ -28,11 +29,19 @@ function App() {
     }
   }, [tasks]);
 
+  // func to add tasks
   const addTask = () => {
     if (input.trim() === "") return;
-    const newTask = { text: input, completed: false };
+
+    const newTask = {
+      text: input,
+      completed: false,
+      dueDate: dueDate || null
+    };
+
     setTasks([...tasks, newTask]);
     setInput("");
+    setDueDate("");
   };
 
   const handleKeyDown = (e) => {
@@ -64,23 +73,38 @@ function App() {
         onKeyDown={handleKeyDown}
         placeholder="Enter a task"
       />
+
+      <input
+        type="date"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+      />
       <button onClick={addTask}>Add</button>
 
       <ul>
         {tasks.map((task, index) => (
-          <li key={index}>
-            <input
-              type="checkbox"
-              checked={task.completed}
-              onChange={() => toggleComplete(index)}
-            />
-            <span style={{
-              textDecoration: task.completed ? 'line-through' : 'none',
-              marginLeft: '0.5rem'
-            }}>
-              {task.text}
-            </span>
-            <button onClick={() => deleteTask(index)} style={{ marginLeft: '1rem' }}>
+          <li key={index} className="task-item">
+            <div className="task-left">
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => toggleComplete(index)}
+              />
+
+              <div className="task-text">
+                <span style={{textDecoration: task.completed ? 'line-through' : 'none'}}>
+                  {task.text}
+                </span>
+
+                {task.dueDate && (
+                  <div className="due-date">
+                    Due: {task.dueDate}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button onClick={() => deleteTask(index)}>
               Delete
             </button>
           </li>
