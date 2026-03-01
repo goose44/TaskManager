@@ -5,6 +5,8 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editedText, setEditedText] = useState("");
 
   // load tasks from localStorage on first load
   useEffect(() => {
@@ -44,6 +46,23 @@ function App() {
     setDueDate("");
   };
 
+  const startEditing = (index) => {
+    setEditingIndex(index);
+    setEditedText(tasks[index].text);
+  };
+
+  // editing tasks
+  const saveEdit = (index) => {
+    const updatedTasks = tasks.map((task, i) =>
+      i === index ? { ...task, text: editedText } : task
+  );
+
+    setTasks(updatedTasks);
+    setEditingIndex(null);
+    setEditedText("");
+  };
+
+  // key shortcut to add
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       addTask();
@@ -61,6 +80,36 @@ function App() {
 
   const deleteTask = (indexToDelete) => {
     setTasks(tasks.filter((_, index) => index !== indexToDelete));
+  };
+
+  const renderTaskContent = (task, index) => {
+    if (editingIndex === index) {
+      return (
+        <div>
+          <input
+            type="text"
+            value={editedText}
+            onChange={(e) => setEditedText(e.target.value)}
+          />
+          <button onClick={() => saveEdit(index)}>Save</button>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <span
+          style={{textDecoration: task.completed ? 'line-through' : 'none'}}>
+          {task.text}
+        </span>
+
+        {task.dueDate && (
+          <div className="due-date">
+            Due: {task.dueDate}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -92,21 +141,20 @@ function App() {
               />
 
               <div className="task-text">
-                <span style={{textDecoration: task.completed ? 'line-through' : 'none'}}>
-                  {task.text}
-                </span>
-
-                {task.dueDate && (
-                  <div className="due-date">
-                    Due: {task.dueDate}
-                  </div>
-                )}
+                {renderTaskContent(task, index)}
               </div>
             </div>
 
-            <button onClick={() => deleteTask(index)}>
-              Delete
-            </button>
+            <div style={{ display: "flex", gap: "5px" }}>
+              {editingIndex !== index && (
+                <button onClick={() => startEditing(index)}>
+                  Edit
+                </button>
+              )}
+              <button onClick={() => deleteTask(index)}>
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
