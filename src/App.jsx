@@ -7,6 +7,7 @@ function App() {
   const [dueDate, setDueDate] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [editedText, setEditedText] = useState("");
+  const [filter, setFilter] = useState("all");
 
   // load tasks from localStorage on first load
   useEffect(() => {
@@ -130,8 +131,22 @@ function App() {
       />
       <button onClick={addTask}>Add</button>
 
+      {/* filter tasks */}
+      <div style={{ margin: "10px 0" }}>
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("active")}>Active</button>
+        <button onClick={() => setFilter("completed")}>Completed</button>
+      </div>
+
       <ul>
-        {tasks.map((task, index) => (
+        {tasks
+        // This is where the filtering works
+          .filter((task) => {
+            if (filter === "active") return !task.completed;
+            if (filter === "completed") return task.completed;
+            return true; // "all"
+          })
+          .map((task, index) => (
           <li key={index} className="task-item">
             <div className="task-left">
               <input
