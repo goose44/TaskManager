@@ -8,6 +8,8 @@ function App() {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editedText, setEditedText] = useState("");
   const [filter, setFilter] = useState("all");
+  const activeCount = tasks.filter(task => !task.completed).length;
+  const completedCount = tasks.filter(task => task.completed).length;
 
   // load tasks from localStorage on first load
   useEffect(() => {
@@ -133,10 +135,33 @@ function App() {
 
       {/* filter tasks */}
       <div style={{ margin: "10px 0" }}>
-        <button onClick={() => setFilter("all")}>All</button>
-        <button onClick={() => setFilter("active")}>Active</button>
-        <button onClick={() => setFilter("completed")}>Completed</button>
+        
+        <button onClick={() => setFilter("all")}
+          style={{
+            backgroundColor: filter === "all" ? "#6c757d" : "#e0e0e0",
+            color: filter === "all" ? "white" : "black"
+          }}
+          >All</button>
+
+        <button onClick={() => setFilter("Incomplete")}
+          style={{
+            backgroundColor: filter === "Incomplete" ? "#ff0000" : "#e0e0e0",
+            color: filter === "Incomplete" ? "white" : "black"
+          }}
+          >Incomplete</button>
+
+        <button onClick={() => setFilter("completed")}
+          style={{
+            backgroundColor: filter === "completed" ? "#28a745" : "#e0e0e0",
+            color: filter === "completed" ? "white" : "black"
+          }}
+          >Completed</button>
       </div>
+
+      {/* completion counter */}
+      <p style={{ fontSize: "0.9rem", color: "gray" }}>
+        {activeCount} active • {completedCount} completed
+      </p>
 
       <ul>
         {tasks
