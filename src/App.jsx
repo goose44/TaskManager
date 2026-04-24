@@ -47,6 +47,8 @@ function App() {
     setTasks([...tasks, newTask]);
     setInput("");
     setDueDate("");
+    setEditingIndex(null);
+    setEditedText("");
   };
 
   const startEditing = (index) => {
@@ -102,7 +104,13 @@ function App() {
     return (
       <div>
         <span
-          style={{textDecoration: task.completed ? 'line-through' : 'none'}}>
+          style={{textDecoration: task.completed ? 'line-through' : 'none',
+          color:
+            !task.completed && task.dueDate && new Date(task.dueDate) < new Date()
+              ? 'red'
+              : 'black'
+          }}
+        >
           {task.text}
         </span>
 
